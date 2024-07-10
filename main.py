@@ -31,8 +31,7 @@ def load_user(user_id):
 
 @app.route("/")
 def home():
-    print(current_user.get_id())
-    return render_template("home.html", logged_in=current_user.is_authenticated)
+    return render_template("home.html", logged_in=current_user.get_id())
 
 
 # adds new user to database
@@ -79,8 +78,8 @@ def sign_up(err):
         db_add(valid_data)
         login(len(db.session.query(Users).all()))
         return redirect(url_for("home"))
-
-    return render_template("sign_up.html", err=err)
+    form_features = {"id-label-name": ["username", "email", "password"], "min-max": [".{8,8}", ".{*.*}", ".{8.10}"]} 
+    return render_template("sign_up.html", err=err, form_features=form_features)
 
 
 @app.route("/sign_in/<err>", methods=["GET", "POST"])
@@ -89,25 +88,21 @@ def sign_in(err):
     if request.method == "POST":
         user_inputs = {item: request.form.get(item) for item in ["email", "password"]}
         database_data = db.session.query(Users).all()
-        is_valid = {"email": False, "password": False}
+        user_data = [user_data for user_data in database_data
+                     if check_password_hash(user_data.email, user_inputs["email"])]
 
         # Checks if information in database matches user's inputs
-        for user_data in database_data:
-            if check_password_hash(user_data.email, user_inputs["email"]):
-                is_valid["email"] = True
+        
+        if len(user_data) == 1:
+            user_data = user_data[0]
             if check_password_hash(user_data.password, user_inputs["password"]):
-                is_valid["password"] = True
-                is_valid["id"] = user_data.id
-
-        # Produces error if information provides by user is invalid
-        if not is_valid["email"] and :
-            return redirect(url_for("sign_in", err="Invalid Email!!!"))
-        elif not is_valid["password"]:
-            return redirect(url_for("sign_in", err="Invalid Password!!!"))
+                login(user_data.id) # Logs the in if user's information is valid
+                return redirect(url_for("home"))
+            else:
+                return redirect(url_for("sign_in", err="Invalid Password!!!"))
         else:
-            # Logs the in if user's information is valid
-            login(is_valid["id"])
-            return redirect(url_for("home"))
+            return redirect(url_for("sign_in", err="Invalid Email!!!"))    
+
 
     return render_template("sign_in.html", err=err)
 
