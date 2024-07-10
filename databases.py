@@ -19,6 +19,7 @@ def get_databases(app, db, usermixin):
             name = db.Column(db.String, unique=True, nullable=False)
             price = db.Column(db.Integer, unique=False, nullable=False)
             category = db.Column(db.Integer, unique=False, nullable=False)
+            type = db.Column(db.String, unique=False, nullable=False)
             sales_val = db.Column(db.Integer, unique=False, nullable=False)
             times_purchased = db.Column(db.Integer, unique=False, nullable=False)
 
