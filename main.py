@@ -20,10 +20,102 @@ Carts = databases["carts"]
 Purchases = databases["purchases"]
 
 
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return Users.query.get(int(user_id))
+
+
 @app.route("/")
 def home():
+    print(current_user.get_id())
+    return render_template("home.html", logged_in=current_user.is_authenticated)
 
-    return render_template("home.html")
+
+# adds new user to database
+def db_add(item):
+    db.session.add(item)
+    db.session.commit()
+
+
+# logs user in
+def login(uid):
+    user = Users.query.filter_by(id=uid).first()
+    login_user(user)
+
+
+def restrict_sign_in_out(function):
+    @wraps(function)
+    def inner_function(*args, **kwargs):
+        is_logged_in = current_user.is_authenticated
+        if is_logged_in:
+            return redirect(url_for("home"))
+        else:
+            return function(*args, **kwargs)
+    return inner_function
+
+
+@app.route("/sign_up/<err>", methods=["GET", "POST"])
+@restrict_sign_in_out
+def sign_up(err):
+    if request.method == "POST":
+        user_inputs = {item: request.form.get(item) for item in ["username", "email", "password"]}
+        database_data = db.session.query(Users).all()
+
+        for user_data in database_data:
+            if user_inputs["username"] == user_data.username:
+                return redirect(url_for("sign_up", err="Error!!! Username in Database."))
+            elif check_password_hash(user_data.email, user_inputs["email"]):
+                return redirect(url_for("sign_up", err="Error!!! Email in Database."))
+            elif check_password_hash(user_data.password, user_inputs["password"]):
+                return redirect(url_for("sign_up", err="Error!!! Password in Database."))
+
+        valid_data = Users(username=user_inputs["username"],
+                           email=generate_password_hash(user_inputs["email"]),
+                           password=generate_password_hash(user_inputs["password"]))
+        db_add(valid_data)
+        login(len(db.session.query(Users).all()))
+        return redirect(url_for("home"))
+
+    return render_template("sign_up.html", err=err)
+
+
+@app.route("/sign_in/<err>", methods=["GET", "POST"])
+@restrict_sign_in_out
+def sign_in(err):
+    if request.method == "POST":
+        user_inputs = {item: request.form.get(item) for item in ["email", "password"]}
+        database_data = db.session.query(Users).all()
+        is_valid = {"email": False, "password": False}
+
+        # Checks if information in database matches user's inputs
+        for user_data in database_data:
+            if check_password_hash(user_data.email, user_inputs["email"]):
+                is_valid["email"] = True
+            if check_password_hash(user_data.password, user_inputs["password"]):
+                is_valid["password"] = True
+                is_valid["id"] = user_data.id
+
+        # Produces error if information provides by user is invalid
+        if not is_valid["email"] and :
+            return redirect(url_for("sign_in", err="Invalid Email!!!"))
+        elif not is_valid["password"]:
+            return redirect(url_for("sign_in", err="Invalid Password!!!"))
+        else:
+            # Logs the in if user's information is valid
+            login(is_valid["id"])
+            return redirect(url_for("home"))
+
+    return render_template("sign_in.html", err=err)
+
+
+@app.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("home"))
 
 
 if __name__ == "__main__":
