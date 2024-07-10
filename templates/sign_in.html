@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Sign In</title>
+
+        <!-- My Stylesheet -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_in.css') }}">
+    </head>
+    <body>
+        <form method="POST">
+            {% for string in ["Email", "Password"]: %}
+                {% if string in err: %}
+                    <h1 id="error" style="color: red">{{ err }}</h1>
+                {% endif %}
+            {% endfor %}
+
+            {% for string in ["email", "password"]: %}
+                {% if string.title() in err: %}
+                    <label style="color: red" for="{{ string }}">{{ string.title() }}</label>
+                    <input style="border-color: red" type="text" id="{{ string }}" name="{{ string }}" required>
+                {% else: %}
+                    <label for="{{ string }}">{{ string.title() }}</label>
+                    <input type="text" id="{{ string }}" name="{{ string }}" required>
+                {% endif %}
+            {% endfor %}
+            <button type="submit" id="submit">Sign In</button>
+        </form>
+    </body>
+</html>
