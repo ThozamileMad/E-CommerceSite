@@ -9,7 +9,7 @@
     </head>
     <body>
 
-        <form method="POST">
+        <form method="POST" id="form">
             {% for string in ["Username", "Email", "Password"]: %}
                 {% if string in err: %}
                     <h1 id="error" style="color: red">{{ err }}</h1>
@@ -17,15 +17,19 @@
             {% endfor %}
 
             {% for string in ["username", "email", "password"]: %}
+                <div class="form-group">
                 {% if string.title() in err: %}
                     <label style="color: red" for="{{ string }}">{{ string.title() }}</label>
-                    <input style="border-color: red" type="text" id="{{ string }}" name="{{ string }}" required>
+                    <input style="border-color: red" type="text" id="{{ string }}" name="{{ string }}">
                 {% else: %}
                     <label for="{{ string }}">{{ string.title() }}</label>
-                    <input type="text" id="{{ string }}" name="{{ string }}" required>
+                    <input type="text" id="{{ string }}" name="{{ string }}">
                 {% endif %}
+                    <div class="error-box"></div>
+                </div>
             {% endfor %}
-            <button type="submit" id="submit">Sign Up</button>
+            <button type="button" id="form-but">Sign Up</button>
         </form>
+        <script src="{{ url_for('static', filename='scripts/sign_up_scripts.js') }}"></script>
     </body>
 </html>

@@ -19,14 +19,14 @@ Products = databases["products"]
 Carts = databases["carts"]
 Purchases = databases["purchases"]
 
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 
 
 @login_manager.user_loader
 def load_user(user_id):
-    return Users.query.get(int(user_id))
+    user = db.session.get(Users, int(user_id))
+    return user
 
 
 @app.route("/")
@@ -54,6 +54,7 @@ def restrict_sign_in_out(function):
             return redirect(url_for("home"))
         else:
             return function(*args, **kwargs)
+
     return inner_function
 
 
@@ -78,8 +79,8 @@ def sign_up(err):
         db_add(valid_data)
         login(len(db.session.query(Users).all()))
         return redirect(url_for("home"))
-    form_features = {"id-label-name": ["username", "email", "password"], "min-max": [".{8,8}", ".{*.*}", ".{8.10}"]} 
-    return render_template("sign_up.html", err=err, form_features=form_features)
+
+    return render_template("sign_up.html", err=err)
 
 
 @app.route("/sign_in/<err>", methods=["GET", "POST"])
@@ -92,17 +93,16 @@ def sign_in(err):
                      if check_password_hash(user_data.email, user_inputs["email"])]
 
         # Checks if information in database matches user's inputs
-        
+
         if len(user_data) == 1:
             user_data = user_data[0]
             if check_password_hash(user_data.password, user_inputs["password"]):
-                login(user_data.id) # Logs the in if user's information is valid
+                login(user_data.id)  # Logs the in if user's information is valid
                 return redirect(url_for("home"))
             else:
                 return redirect(url_for("sign_in", err="Invalid Password!!!"))
         else:
-            return redirect(url_for("sign_in", err="Invalid Email!!!"))    
-
+            return redirect(url_for("sign_in", err="Invalid Email!!!"))
 
     return render_template("sign_in.html", err=err)
 
