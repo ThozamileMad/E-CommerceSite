@@ -8,21 +8,14 @@
 
         <script>
 
-            let userInput = 'madelathepoet@gmail.com';
+            let userInput = 'mm|.il.com';
+            // console.log(/^[-.]|[.-]$|[:,]|([+])\1|.(?<=-)|.(?=-)/.test(userInput));
 
-            function validate1() {
-                /* for (let i = 0; i < userInput.length; i++) {
-                    if (userInput[i] === "." && userInput[i + 1] === ".") {
-                        return false
-                    }
-                } */
-
-                // console.log(/\.*\./g.test(userInput))
-
-                // console.log(userInput.split(".").length - 1)
-
+            const invalidEmail = (regex, emailSegment) => {
+              return regex.test(emailSegment);
             }
-            validate1()
+
+            console.log(invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[.\\-_!#$%&'*+/=?^`{|}~]{2}/, userInput))
 
             const charCounter = (char) => userInput.split(char).length - 1;
 
@@ -51,43 +44,45 @@
                 }
             }
 
-            const isNotValid = () => {
-              const splitEmailAddress = userInput.split("@");
-
-              // User Metrics
-              const userPart = splitEmailAddress[0];
+            const emailUsernameIsNotValid = (userPart) => {
+              // User Metrics;
               const userPartDisallowedChars = [' ', '"', '\\', ',', ':', ';', '<', '>', '[', ']', '(', ')', '@'];
               const restrictedUserPartBeginEndChars = ['.', '-', '_', '!', '#', '$', '%', '&', "'", '*', '+', '/', '=', '?', '^', '`', '{', '|', '}', '~'];
               const restrictedUserPartDoubleChars = restrictedUserPartBeginEndChars.map((item) => `${item}${item}`)
 
-              // Domain Metrics
-              const domainPart = splitEmailAddress[1];
-              const domainPartDisallowedChars = [' ', '"', '\\', ',', ':', ';', '<', '>', '[', ']', '(', ')', '@', '_', '/'];
-              const restrictedDomainBeginEndChars = ['-', '.'];
-              const restrictedDomainPartDoubleChars = restrictedDomainBeginEndChars.map((item) => `${item}${item}`)
-
-
-              if (atError()) {
-                return true;
-              } else if (hasUnallowedChars(userPart, userPartDisallowedChars)) {
+              if (hasUnallowedChars(userPart, userPartDisallowedChars)) {
                 return true;
               } else if (hasUnallowedChars(userPart, restrictedUserPartDoubleChars)){
                 return true;
               } else if (hasBeginningEndChar(userPart, restrictedUserPartBeginEndChars)) {
                 return true;
-              } else if (hasUnallowedChars(domainPart, domainPartDisallowedChars)) {
+              }
+
+              return false;
+            }
+
+            const emailDomainIsNotValid = (domainPart) => {
+              // Domain Metrics
+              const domainPartDisallowedChars = [' ', '"', '\\', ',', ':', ';', '<', '>', '[', ']', '(', ')', '@', '_', '/'];
+              const restrictedDomainBeginEndChars = ['-', '.'];
+              const restrictedDomainPartDoubleChars = restrictedDomainBeginEndChars.map((item) => `${item}${item}`)
+
+              if (hasUnallowedChars(domainPart, domainPartDisallowedChars)) {
                 return true;
               } else if (hasUnallowedChars(domainPart, restrictedDomainPartDoubleChars)) {
                 return true;
               } else if (hasBeginningEndChar(domainPart, restrictedDomainBeginEndChars)) {
                 return true;
-              } else {
-                return false;
               }
+
+              return false;
             }
 
-            console.log(isNotValid())
+            const emailHasNoDomainOrUsername = () => {
+                return splitUserInput[0].length > 0 && splitUserInput[1].length > 0 ? true : false;
+            }
 
+            // const emailDomain
         </script>
     </body>
 </html>
