@@ -1,6 +1,6 @@
 const form = document.getElementById("form")
 const submitButton = document.getElementById("form-but")
-const noError = true;
+let noError = true;
 
 // Flag Invalid Char
 const invalidInput = (regex, input) => {
@@ -11,6 +11,7 @@ const invalidInput = (regex, input) => {
 function triggerError(label, input, errorbox, message) {
     label.style.color = "red";
     input.style.borderColor = "red";
+    input.value = "";
     errorbox.innerHTML = `<p style="color: red" class="error-text">${message}</p>`;
     noError = false;
 }
@@ -20,10 +21,12 @@ function checkForSpacesInInputs(labels, userInputs, errorBoxes) {
     for (let i = 0; i < labels.length; i++) {
          const userInput = userInputs[i];
          const label = labels[i];
-         const errorBoxes = erroroBoxes[i]
+         const errorBox = errorBoxes[i]
 
         if (invalidInput(/\s/g, userInput.value)) {
-            triggerError(userInput, label, errorBoxes, "Error! No spaces allowed in field.")
+            triggerError(label, userInput, errorBox, "Error!!! No spaces allowed in field.")
+        } else {
+            noError = true;
         }
     }
 }
@@ -34,19 +37,19 @@ function validateEmailAddress(emailInput, emailLabel, emailErrorField) {
 
     if (emailAddress.includes("@")) {
         const usernameAndDomain = emailAddress.split("@");
-        const emailUsername = usernameDomain[0];
-        const emailDomain = usernameDomain[1];
+        const emailUsername = usernameAndDomain[0];
+        const emailDomain = usernameAndDomain[1];
 
         // Prompts Username Error
-        if (invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, username)) {
-            triggerError(emailLabel, emailInput, emailErrorField, "Error! in email username!!!");
+        if (invalidInput(/^[\.\-_!#$%&'*+/=?^`{|}~]|[\.\-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, emailUsername)) {
+            triggerError(emailLabel, emailInput, emailErrorField, "Error!!! Invalid Username.");
         }
 
         // Prompt Domain Error
-        if (invalidEmail(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, domain)) {
-            triggerError(emailLabel, emailInput, emailErrorField, "Error! in email domain!!!");
+        if (invalidInput(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, emailDomain)) {
+            triggerError(emailLabel, emailInput, emailErrorField, "Error!!! Invalid Domain.");
         }
-    else {
+    } else {
         noError = false;
     }
 }
@@ -56,13 +59,13 @@ function submitForm() {
     // Labels
     const labels = document.querySelectorAll("label");
     const userInputs = document.querySelectorAll("input");
-    const errorFields = document.querySelectorAll(".error-field");
+    const errorFields = document.querySelectorAll(".error-box");
 
     // Detect Spaces in fields
-    checkForSpaceError(labels, userInputs, errorFields);
+    checkForSpacesInInputs(labels, userInputs, errorFields);
 
     // Validate Email Address
-    validateEmailAddress(userInput[1], labels[1], errorFields[1])
+    validateEmailAddress(userInputs[1], labels[1], errorFields[1])
 
     if (noError) {
         form.submit()
