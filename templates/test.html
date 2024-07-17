@@ -8,14 +8,16 @@
 
         <script>
 
-            let userInput = 'mm|.il.com';
+            let userInput = 'm\mil.com';
             // console.log(/^[-.]|[.-]$|[:,]|([+])\1|.(?<=-)|.(?=-)/.test(userInput));
 
             const invalidEmail = (regex, emailSegment) => {
               return regex.test(emailSegment);
             }
 
-            console.log(invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[.\\-_!#$%&'*+/=?^`{|}~]{2}/, userInput))
+            // console.log(invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, userInput))
+            // console.log(invalidEmail(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, userInput), userInput)
+            console.log(invalidEmail(/\\/, userInput))
 
             const charCounter = (char) => userInput.split(char).length - 1;
 
