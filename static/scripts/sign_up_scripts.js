@@ -1,6 +1,6 @@
 const form = document.getElementById("form")
 const submitButton = document.getElementById("form-but")
-let noError = true;
+
 
 // Flag Invalid Char
 const invalidInput = (regex, input) => {
@@ -11,46 +11,55 @@ const invalidInput = (regex, input) => {
 function triggerError(label, input, errorbox, message) {
     label.style.color = "red";
     input.style.borderColor = "red";
-    input.value = "";
     errorbox.innerHTML = `<p style="color: red" class="error-text">${message}</p>`;
-    noError = false;
+}
+
+
+function triggerValid(label, input, errorbox) {
+    label.style.color = "black";
+    input.style.borderColor = "black";
+    errorbox.innerHTML = ``;
 }
 
 
 function checkForSpacesInInputs(labels, userInputs, errorBoxes) {
+    let validInputNum = 0
     for (let i = 0; i < labels.length; i++) {
-         const userInput = userInputs[i];
-         const label = labels[i];
-         const errorBox = errorBoxes[i]
+        const userInput = userInputs[i];
+        const userInputValue = userInput.value
+        const label = labels[i];
+        const errorBox = errorBoxes[i]
 
-        if (invalidInput(/\s/g, userInput.value)) {
-            triggerError(label, userInput, errorBox, "Error!!! No spaces allowed in field.")
-        } else {
-            noError = true;
+        // Checks For
+        if (invalidInput(/\s/g, userInputValue.trim()) || userInputValue.length === 0 || invalidInput(/^\s/, userInputValue)) {
+            triggerError(label, userInput, errorBox, "Error!!! No spaces allowed in field.");
+            validInputNum += 1;
+        }  else {
+            triggerValid(label, userInput, errorBox);
         }
     }
+    return validInputNum === 3 ? true : false;
 }
 
 
 function validateEmailAddress(emailInput, emailLabel, emailErrorField) {
-    const emailAddress = emailInput.value
-
-    if (emailAddress.includes("@")) {
+    const emailAddress = emailInput.value.trim()
+    if (emailAddress.includes("@") && emailAddress.includes(".")) {
         const usernameAndDomain = emailAddress.split("@");
         const emailUsername = usernameAndDomain[0];
         const emailDomain = usernameAndDomain[1];
 
-        // Prompts Username Error
+        // Prompts Username and Domain Error
         if (invalidInput(/^[\.\-_!#$%&'*+/=?^`{|}~]|[\.\-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, emailUsername)) {
             triggerError(emailLabel, emailInput, emailErrorField, "Error!!! Invalid Username.");
-        }
-
-        // Prompt Domain Error
-        if (invalidInput(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, emailDomain)) {
+        } else if (invalidInput(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, emailDomain)) {
             triggerError(emailLabel, emailInput, emailErrorField, "Error!!! Invalid Domain.");
+        } else {
+            triggerValid(emailLabel, emailInput, emailErrorField);
+            return true;
         }
     } else {
-        noError = false;
+        triggerError(emailLabel, emailInput, emailErrorField, "Error!!! Invalid Email Address.");
     }
 }
 
@@ -62,12 +71,12 @@ function submitForm() {
     const errorFields = document.querySelectorAll(".error-box");
 
     // Detect Spaces in fields
-    checkForSpacesInInputs(labels, userInputs, errorFields);
+    const spacesInInputs = checkForSpacesInInputs(labels, userInputs, errorFields);
 
     // Validate Email Address
-    validateEmailAddress(userInputs[1], labels[1], errorFields[1])
+    const emailIsValid = validateEmailAddress(userInputs[1], labels[1], errorFields[1])
 
-    if (noError) {
+    if (spacesInInputs === false && emailIsValid) {
         form.submit()
     }
 }
