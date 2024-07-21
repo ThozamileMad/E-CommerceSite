@@ -11,13 +11,21 @@ html, body {
     text-align: center;
 }
 
+a:hover {
+  color: #1abc9c;
+}
+
+a:active {
+  color: #e74c3c;
+}
+
 /* Left Section */
 #left-s {
     background: url("https://cdn.pixabay.com/photo/2024/06/17/07/34/woman-8835156_1280.png");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    width: 40%;
+    width: 540px;
 }
 
 /* Right Section */
@@ -28,9 +36,13 @@ html, body {
 
 .hanger-img {
     width: 120px;
-    transform: rotate(10deg);
     margin-left: 110px;
+    transform: rotate(10deg);
+    position: absolute;
+    top: 0;
+    transition: top 0.5s;
 }
+
 
 form {
     margin-left: 200px;

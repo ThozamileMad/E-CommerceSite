@@ -67,11 +67,11 @@ def sign_up(err):
 
         for user_data in database_data:
             if user_inputs["username"] == user_data.username:
-                return redirect(url_for("sign_up", err="Error!!! Username in Database."))
+                return redirect(url_for("sign_up", err="Error: Username in Database!"))
             elif check_password_hash(user_data.email, user_inputs["email"]):
-                return redirect(url_for("sign_up", err="Error!!! Email in Database."))
+                return redirect(url_for("sign_up", err="Error: Email Address in Database!"))
             elif check_password_hash(user_data.password, user_inputs["password"]):
-                return redirect(url_for("sign_up", err="Error!!! Password in Database."))
+                return redirect(url_for("sign_up", err="Error: Password in Database!"))
 
         valid_data = Users(username=user_inputs["username"],
                            email=generate_password_hash(user_inputs["email"]),
@@ -100,11 +100,16 @@ def sign_in(err):
                 login(user_data.id)  # Logs the in if user's information is valid
                 return redirect(url_for("home"))
             else:
-                return redirect(url_for("sign_in", err="Invalid Password!!!"))
+                return redirect(url_for("sign_in", err="Error: Password does not match any passwords stored in the database. Please try again."))
         else:
-            return redirect(url_for("sign_in", err="Invalid Email!!!"))
+            return redirect(url_for("sign_in", err="Error: Email does not match any email stored in the database. Please try again."))
 
     return render_template("sign_in.html", err=err)
+
+
+@app.route("/forgot_password/<err>", methods=["GET", "POST"])
+def forgot_password(err):
+    return render_template("forgot_password.html")
 
 
 @app.route("/logout")

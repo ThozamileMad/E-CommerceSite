@@ -1,0 +1,113 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.t-center {
+    text-align: center;
+}
+
+main {
+    height: 100%;
+}
+
+a:hover {
+  color: #1abc9c;
+}
+
+a:active {
+  color: #e74c3c;
+}
+
+/* Left Section */
+#left-s {
+    background: url("https://cdn.pixabay.com/photo/2020/06/26/14/46/india-5342927_1280.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 540px;
+}
+
+/* Right Section */
+#right-s {
+    width: 60%;
+    font-family: "Roboto", sans-serif;
+}
+
+main {
+    height: 100%;
+}
+
+.hanger-img {
+    width: 120px;
+    margin-left: 110px;
+    transform: rotate(10deg);
+    position: absolute;
+    top: 0;
+    transition: top 0.5s;
+}
+
+
+form {
+    margin-left: 200px;
+    padding-top: 30px;
+    width: 332px;
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: 350;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 320px;
+    height: 30px;
+    border: 1px solid #B0B0B0;
+    border-radius: 3px;
+    padding-left: 6px;
+    font-size: 18px;
+}
+
+#form-title {
+    color: #604CC3;
+    font-size: 40px;
+}
+
+#password {
+    margin-bottom: 5px;
+}
+
+.but-div {
+    text-align: center;
+    padding-top: 12px;
+}
+
+#form-but {
+    color: white;
+    background-color: #4C3A99;
+    border: 1px solid #4C3A99;
+    border-radius: 5px;
+    width: 150px;
+    height: 45px;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+#form-but:hover, #form-but:active {
+    filter: brightness(0.9);
+}
+
+.sign-up.text {
+    margin: 20px 0 25px;
+}

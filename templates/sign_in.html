@@ -6,25 +6,58 @@
 
         <!-- My Stylesheet -->
         <link rel="stylesheet" href="{{ url_for('static', filename='css/sign_in.css') }}">
+
+        <!-- Noto Sans Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+        <!-- Fontawesome scripts -->
+        <script src="https://kit.fontawesome.com/4b92c18dda.js" crossorigin="anonymous"></script>
     </head>
     <body>
-        <form method="POST">
-            {% for string in ["Email", "Password"]: %}
-                {% if string in err: %}
-                    <h1 id="error" style="color: red">{{ err }}</h1>
-                {% endif %}
-            {% endfor %}
-
-            {% for string in ["email", "password"]: %}
-                {% if string.title() in err: %}
-                    <label style="color: red" for="{{ string }}">{{ string.title() }}</label>
-                    <input style="border-color: red" type="text" id="{{ string }}" name="{{ string }}" required>
-                {% else: %}
-                    <label for="{{ string }}">{{ string.title() }}</label>
-                    <input type="text" id="{{ string }}" name="{{ string }}" required>
-                {% endif %}
-            {% endfor %}
-            <button type="submit" id="submit">Sign In</button>
-        </form>
+        <!-- https://www.bing.com/images/search?view=detailV2&ccid=Y8lSilFc&id=90FB7EDE41E618961A8709D4CEE363CCA7A207DE&thid=OIP.Y8lSilFc-LQAiBPvqQTm-AHaEK&mediaurl=https%3A%2F%2Fi.pinimg.com%2Foriginals%2F38%2F8d%2F46%2F388d469124158bd5a8402c6d600b5b30.png&cdnurl=https%3A%2F%2Fth.bing.com%2Fth%2Fid%2FR.63c9528a515cf8b4008813efa904e6f8%3Frik%3D3geip8xj487UCQ%26pid%3DImgRaw%26r%3D0&exph=1080&expw=1920&q=e-commercesign+up+web+form&simid=608016268686020164&form=IRPRST&ck=3DB94D39525D461CBA4DA00E44B3F375&selectedindex=4&itb=0&ajaxhist=0&ajaxserp=0&vt=0&sim=11 -->
+        <main class="flex">
+            <section id="left-s"></section>
+            <section id="right-s" class="flex">
+                <form method="POST" id="form">
+                    <h1 id="form-title">Sign in to Account</h1>
+                     {% for string in ["Email", "Password"]: %}
+                        {% if string in err: %}
+                            <h1 id="database-error" style="color: red">{{ err }}</h1>
+                        {% else: %}
+                            <h1 id="database-error" style="color: red"></h1>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="email">Email Address:</label>
+                        <input type="text" id="email" name="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password">
+                        <a id="forgot-password" href="#"> Forgot Password?</a>
+                    </div>
+                    <div class="but-div t-center">
+                        <button type="button" id="form-but">
+                            Sign In
+                            <span class="icon"><i class="fa-solid fa-arrow-right-to-bracket"></i></span>
+                        </button>
+                    </div>
+                    <div class="form-group t-center">
+                        <p class="sign-up text">
+                            Don't have an account?
+                            <span>
+                                <a id="sign-up link" href="{{ url_for('sign_up', err='err') }}">Sign Up</a>
+                            </span>
+                        </p>
+                    </div>
+                </form>
+                <div class="icon">
+                    <img class="hanger-img" src="https://cdn-icons-png.flaticon.com/512/3159/3159614.png" alt="image">
+                </div>
+            </section>
+        </main>
+        <script src="{{ url_for('static', filename='scripts/sign_in_scripts.js') }}"></script>
     </body>
 </html>

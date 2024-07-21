@@ -3,21 +3,96 @@
     <head>
         <meta charset="UTF-8">
         <title>Title</title>
+        <style>
+            .flex {
+                display: flex;
+            }
+
+            .strength-fields {
+                column-gap: 10px;
+            }
+
+            .strength-field {
+                width: 30px;
+                height: 5px;
+                background-color: gray;
+                transition: 0.5s;
+            }
+
+        </style>
     </head>
     <body>
-
+        <form>
+            <input type="text">
+            <div class="strength-fields" style="display: flex">
+                <div class="strength-field" style="background-color: gray"></div>
+                <div class="strength-field" style="background-color: gray"></div>
+                <div class="strength-field" style="background-color: gray"></div>
+                <div class="strength-field" style="background-color: gray"></div>
+            </div>
+        </form>
         <script>
+            document.querySelector("input").addEventListener("input", (event) => {
+                console.log(document.querySelector("input").value);
+                checkPasswordStrength(document.querySelector("input").value)
+            })
 
-            let userInput = 'm\mil.com';
+            function matchPasswordChar(userInput) {
+                // Array.from(userInput.match(/[A-Z]/g)).length
+                const regexList = [/[A-Z]/g, /[a-z]/g, /[\d]/g, /[!@#$%^&*(),.?":{}|<>_\-+=~`[\]\\/'\\;]/g];
+                const maxNums = [2, 3, 2, 1]
+                let numOfMatches = [];
+                for (let i = 0; i < regexList.length; i++) {
+                    const matches = userInput.match(regexList[i])
+                    const maxNum = maxNums[i]
+                    if (matches !== null) {
+                       if (matches.length <= maxNum) {
+                         numOfMatches.push(matches.length)
+                       } else {
+                         numOfMatches.push(maxNum)
+                       }
+                    } else {
+                        numOfMatches.push(0);
+                    }
+                }
+                console.log(numOfMatches)
+                return numOfMatches
+            }
+
+            const makePasswordBars = (colors) => {
+                return `<div class="strength-field" style="background-color: ${colors[0]}"></div>
+                        <div class="strength-field" style="background-color: ${colors[1]}"></div>
+                        <div class="strength-field" style="background-color: ${colors[2]}"></div>
+                        <div class="strength-field" style="background-color: ${colors[3]}"></div>`
+            }
+
+            function checkPasswordStrength(userInput) {
+                const totalMatchNum = matchPasswordChar(userInput).reduce((sum, matchNum) => sum += matchNum);
+                const strengthField = document.querySelector(".strength-fields");
+
+                if (totalMatchNum > 6) {
+                   strengthField.innerHTML = makePasswordBars(["green", "green", "green", "green"]);
+                } else if (totalMatchNum > 4) {
+                    strengthField.innerHTML = makePasswordBars(["orange", "orange", "orange", "gray"]);
+                } else if (totalMatchNum > 2) {
+                    strengthField.innerHTML = makePasswordBars(["yellow", "yellow", "gray", "gray"]);
+                } else if (totalMatchNum > 0) {
+                    strengthField.innerHTML = makePasswordBars(["red", "gray", "gray", "gray"]);
+                } else {
+                    strengthField.innerHTML = makePasswordBars(["gray", "gray", "gray", "gray"]);
+                }
+            }
+
+
+            //console.log(Array.from(userInput.match(/[A-Z]/g)).length)
             // console.log(/^[-.]|[.-]$|[:,]|([+])\1|.(?<=-)|.(?=-)/.test(userInput));
 
-            const invalidEmail = (regex, emailSegment) => {
+            function invalidEmail(regex, emailSegment) {
               return regex.test(emailSegment);
             }
 
-            // console.log(invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, userInput))
+            // console.log(invalidEmail(/^[.-_!#$%&'*+/=?^`{|}~]|[.-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()]|[-_!\.#$%&'*+/=?^`{|}~]{2}/g, "maddickinson6"))
             // console.log(invalidEmail(/^[-.]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, userInput), userInput)
-            console.log(invalidEmail(/\\/, userInput))
 
             const charCounter = (char) => userInput.split(char).length - 1;
 

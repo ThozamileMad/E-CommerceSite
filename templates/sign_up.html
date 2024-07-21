@@ -41,7 +41,7 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password:</label>
-                        <input type="text" id="password" name="password">
+                        <input type="password" id="password" name="password">
                         <div class="strength-fields flex">
                             <div class="strength-field" style="background-color: #B0B0B0"></div>
                             <div class="strength-field" style="background-color: #B0B0B0"></div>
@@ -72,7 +72,7 @@
                         <p class="sign-in text">
                             Already registered?
                             <span>
-                                <a id="sign-in link" href="#">Sign In</a>
+                                <a id="sign-in link" href="{{ url_for('sign_in', err='err') }}">Sign In</a>
                             </span>
                         </p>
                     </div>

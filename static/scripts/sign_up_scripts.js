@@ -15,6 +15,14 @@ const emailLabel = document.querySelector("label[for='email']");
 const emailInput = document.getElementById("email");
 const emailErrorField = document.querySelector(".error-box.email");
 
+// Confirm Password elements
+const confirmPasswordLabel = document.querySelector("label[for='confirm-password']");
+const confirmPasswordInput = document.getElementById("confirm-password");
+const confirmPasswordErrorField = document.querySelector(".confirm-password");
+
+// Hanger Image
+const hangerImage = document.querySelector(".hanger-img")
+
 const submitButton = document.getElementById("form-but")
 
 // Checks for invalid characters using regex
@@ -161,13 +169,36 @@ passwordInput.addEventListener("input", () => {
 })
 
 
+// Confirm Password code
+function checkIfPasswordsMatch() {
+    const passwordInputValue = passwordInput.value.trim()
+    const confirmPasswordInputValue = confirmPasswordInput.value.trim()
+    if (passwordInputValue === confirmPasswordInputValue) {
+        triggerValid(confirmPasswordLabel, confirmPasswordInput, confirmPasswordErrorField)
+        return true;
+    } else {
+        triggerError(confirmPasswordLabel, confirmPasswordInput, confirmPasswordErrorField, "Error: Passwords do not match. Please try again.")
+    }
+}
+
+// Hanger Image Animation
+const moveImageOnSubmit = () => {
+    hangerImage.style.top = "100%";
+    setTimeout(() => {
+        hangerImage.style.display = "none"
+    }, 400)
+}
+
 // Submission code
 // Performs validation checks and submits form if provided info is valid
 function submitForm() {
     const usernameIsValid = usernameValidator()
     const emailIsValid = validateEmailAddress()
-    passwordIsValid = passwordValidator()
-    if (usernameIsValid && emailIsValid && passwordIsValid) {
+    const passwordIsValid = passwordValidator()
+    const passwordsMatch = checkIfPasswordsMatch()
+
+    if (usernameIsValid && emailIsValid && passwordIsValid && passwordsMatch) {
+        moveImageOnSubmit()
         form.submit()
     }
 }
