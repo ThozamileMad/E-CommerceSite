@@ -1,0 +1,101 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.flex {
+    display: flex;
+}
+
+.t-center {
+    text-align: center;
+}
+
+/* Left Section */
+#left-s {
+    background: url("https://cdn.pixabay.com/photo/2024/06/17/07/34/woman-8835156_1280.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 40%;
+}
+
+/* Right Section */
+#right-s {
+    width: 60%;
+    font-family: "Roboto", sans-serif;
+}
+
+.hanger-img {
+    width: 120px;
+    transform: rotate(10deg);
+    margin-left: 110px;
+}
+
+form {
+    margin-left: 200px;
+    padding-top: 30px;
+    width: 332px;
+}
+
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: 350;
+    font-size: 18px;
+    margin-bottom: 6px;
+}
+
+input {
+    width: 320px;
+    height: 30px;
+    border: 1px solid #B0B0B0;
+    border-radius: 3px;
+    padding-left: 6px;
+    font-size: 18px;
+}
+
+#form-title {
+    color: #604CC3;
+    font-size: 40px;
+}
+
+.strength-fields {
+    column-gap: 12px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.strength-field {
+    width: 45px;
+    height: 5px;
+    transition: 0.5s;
+}
+
+.but-div {
+    text-align: center;
+    padding-top: 12px;
+}
+
+#form-but {
+    color: white;
+    background-color: #4C3A99;
+    border: 1px solid #4C3A99;
+    border-radius: 5px;
+    width: 150px;
+    height: 45px;
+    font-size: 21px;
+    cursor: pointer;
+}
+
+#form-but:hover, #form-but:active {
+    filter: brightness(0.9);
+}
+
+.ts_and_cs.text {
+    margin: 20px 0 25px;
+}
