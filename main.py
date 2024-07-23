@@ -3,6 +3,8 @@ from flask_login import UserMixin, login_user, LoginManager, current_user, logou
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from databases import get_db, get_databases
+from email_sender import mailSender
+import random
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "n19rcy3mpmr3yrhhfh0jo22f9f8h1"
@@ -102,13 +104,28 @@ def sign_in(err):
             else:
                 return redirect(url_for("sign_in", err="Error: Password does not match any passwords stored in the database. Please try again."))
         else:
-            return redirect(url_for("sign_in", err="Error: Email does not match any email stored in the database. Please try again."))
+            return redirect(url_for("sign_in", err="Error: Email Address does not match any email address stored in the database. Please try again."))
 
     return render_template("sign_in.html", err=err)
 
 
 @app.route("/forgot_password/<err>", methods=["GET", "POST"])
 def forgot_password(err):
+    if request.method == "POST":
+        email = request.form.get("email")
+        user_data = Users.query.filter_by(email=email)
+
+        if user_data is not None:
+            # Generate Random pin and send email
+            random_pin = random.randint(1, 999)
+            mailsender = mailSender()
+            result = mailsender.send_email(user_data.email, "Password Recovery", "Use this pin to recover your password {}".format(random_pin))
+
+            if result != 200:
+                return redirect(url_for("forgot_password", err="Error: sorry an error has occured, please click resend."))
+            else:
+                return redirect(url_for("recover_pin", err="err"))
+
     return render_template("forgot_password.html")
 
 

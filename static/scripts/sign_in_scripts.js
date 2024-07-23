@@ -2,6 +2,7 @@
 const form = document.getElementById("form")
 const submitButton = document.getElementById("form-but")
 const hangerImage = document.querySelector(".hanger-img")
+const errorTag = document.getElementById("error");
 
 // Email elements
 const emailLabel = document.querySelector("label[for='email']");
@@ -40,8 +41,7 @@ document.addEventListener("keyup", ctrlEnterSubmit)
 
 // Prompt Error if input is in database
 function promptDatabaseError(label, input) {
-    const databaseErrorTitle = document.getElementById("database-error");
-    const titleText = databaseErrorTitle.innerText;
+    const titleText = errorTag.innerText;
     const labelText = label.innerText.slice(0, label.innerText.length - 1);
 
     if (titleText.includes(labelText)) {

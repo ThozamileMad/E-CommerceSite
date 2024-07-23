@@ -1,24 +1,26 @@
 const form = document.getElementById("form")
 
+// Error Element
+const errorTag = document.getElementById("error")
+
 // Username elements
 const usernameLabel = document.querySelector("label[for='username']");
 const usernameInput = document.getElementById("username");
-const usernameErrorField = document.querySelector(".error-box.username");
 
 // Password elements
 const passwordLabel = document.querySelector("label[for='password']");
 const passwordInput = document.getElementById("password");
-const passwordErrorField = document.querySelector(".error-box.password");
 
 // Email elements
 const emailLabel = document.querySelector("label[for='email']");
 const emailInput = document.getElementById("email");
-const emailErrorField = document.querySelector(".error-box.email");
 
 // Confirm Password elements
 const confirmPasswordLabel = document.querySelector("label[for='confirm-password']");
 const confirmPasswordInput = document.getElementById("confirm-password");
-const confirmPasswordErrorField = document.querySelector(".confirm-password");
+
+// Errors
+const errors = [null, null, null, null]
 
 // Hanger Image
 const hangerImage = document.querySelector(".hanger-img")
@@ -30,19 +32,32 @@ const invalidInput = (regex, input) => {
     return regex.test(input);
 }
 
+
 // Displays errors by making an element's features red and showing error message
-function triggerError(label, input, errorbox, message) {
+function triggerError(label, input, message) {
     label.style.color = "red";
     input.style.borderColor = "red";
-    errorbox.innerHTML = `<p style="color: red" class="error-text">${message}</p>`;
+    errorTag.textContent = message
 }
 
+
 // Reverts errors back to valid
-function triggerValid(label, input, errorbox) {
+function triggerValid(label, input) {
     label.style.color = "black";
     input.style.borderColor = "black";
-    errorbox.innerHTML = ``;
+    errorTag.textContent = "";
 }
+
+
+function makeAllValid() {
+    const labels = document.querySelectorAll("label");
+    const inputs = document.querySelectorAll("input");
+
+    for (let i = 0; i < labels.length; i++) {
+        triggerValid(labels[i], inputs[i])
+    }
+}
+
 
 // Username Validation Code
 
@@ -53,38 +68,39 @@ function usernameValidator() {
     const inputLength = inputValue.trim().length;
 
     if (invalidInput(/[^a-zA-Z\d_\-.]/, inputValue.trim()) || invalidInput(/^\s/, inputValue)) {
-        triggerError(usernameLabel, usernameInput, usernameErrorField, `Invalid username: Please use only letters, numbers, underscores (_), hyphens (-), and periods (.).`);
+        errors[0] = {label: usernameLabel, input: usernameInput, message: "Invalid username: Please use only letters, numbers, underscores (_), hyphens (-), and periods (.)."};
     } else if (inputLength < 3) {
-        triggerError(usernameLabel, usernameInput, usernameErrorField, "Your username must be at least 3 characters long. Please enter a longer username.")
+        errors[0] = {label: usernameLabel, input: usernameInput, message: "Your username must be at least 3 characters long. Please enter a longer username."};
     } else if (inputLength > 12) {
-        triggerError(usernameLabel, usernameInput, usernameErrorField, "Your username must not exceed 12 characters. Please enter a shorter username.")
+        errors[0] = {label: usernameLabel, input: usernameInput, message: "Your username must not exceed 12 characters. Please enter a shorter username."};
     } else {
-        triggerValid(usernameLabel, usernameInput, usernameErrorField);
-        return true;
+        errors[0] = null;
     }
 }
+
 
 
 // Email Validation Code
 // Checks if email has valid characters such as @ and .
 function validateEmailAddress() {
     const emailAddress = emailInput.value
-    if (emailAddress.includes("@") && emailAddress.includes(".")) {
+    const oneAtSymbol = emailAddress.match(/@/g).length === 1 ? true : false
+    console.log(oneAtSymbol)
+    if (emailAddress.includes("@") && emailAddress.includes(".") && oneAtSymbol) {
         const usernameAndDomain = emailAddress.split("@");
         const emailUsername = usernameAndDomain[0];
         const emailDomain = usernameAndDomain[1];
 
         // Prompts Username and Domain Error
         if (invalidInput(/^[\.\-_!#$%&'*+/=?^`{|}~\s]|[\.\-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()\s]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, emailUsername)) {
-            triggerError(emailLabel, emailInput, emailErrorField, "Invalid Username. Please enter a valid email address. Ensure there are no spaces or invalid characters.");
+            errors[1] = {label: emailLabel, input: emailInput, message: "Invalid Email Username. Please enter a valid email address. Ensure there are no spaces or invalid characters."};
         } else if (invalidInput(/^[-.\s]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, emailDomain)) {
-            triggerError(emailLabel, emailInput, emailErrorField, "Invalid Domain. Please enter a valid email address. Ensure there are no spaces or invalid characters.");
+            errors[1] = {label: emailLabel, input: emailInput, message: "Invalid Email Domain. Please enter a valid email address. Ensure there are no spaces or invalid characters."};
         } else {
-            triggerValid(emailLabel, emailInput, emailErrorField);
-            return true;
+            errors[1] = null
         }
     } else {
-        triggerError(emailLabel, emailInput, emailErrorField, "Invalid email address. Please ensure your email includes at least one '@' symbol and one period.");
+        errors[1] = {label: emailLabel, input: emailInput, message: "Invalid email address. Please ensure your email includes one '@' symbol and one period."};
     }
 }
 
@@ -150,16 +166,15 @@ function passwordValidator() {
     const inputLength = inputValue.trim().length;
 
     if (invalidInput(/\s/g, inputValue.trim()) || invalidInput(/^\s/, inputValue)) {
-        triggerError(passwordLabel, passwordInput, passwordErrorField, "Invalid Password: Your password contains spaces, please remove all spaces.");
+        errors[2] = {label: passwordLabel, input: passwordInput, message: "Invalid Password: Your password contains spaces, please remove all spaces."};
     } else if (inputLength < 8) {
-        triggerError(passwordLabel, passwordInput, passwordErrorField, "Invalid Password: Your password must be at least 8 characters long. Please enter a longer password.")
+        errors[2] = {label: passwordLabel, input: passwordInput, message: "Invalid Password: Your password must be at least 8 characters long. Please enter a longer password."}
     } else if (inputLength > 64) {
-        triggerError(passwordLabel, passwordInput, passwordErrorField, "Invalid Password: Your password must not exceed 64 characters. Please enter a shorter password.")
+        errors[2] = {label: passwordLabel, input: passwordInput, message: "Invalid Password: Your password must not exceed 64 characters. Please enter a shorter password."}
     } else if (matchPasswordChar(inputValue.trim()) < 8) {
-        triggerError(passwordLabel, passwordInput, passwordErrorField, "Invalid Password: Your password must contain at least 1 special character, 2 uppercase letters, 3 lowercase letters, and 2 digits.")
+        errors[2] = {label: passwordLabel, input: passwordInput, message: "Invalid Password: Your password must contain at least 1 special character, 2 uppercase letters, 3 lowercase letters, and 2 digits."}
     }  else {
-        triggerValid(passwordLabel, passwordInput, passwordErrorField);
-        return true
+        errors[2] = null;
     }
 }
 
@@ -173,11 +188,10 @@ passwordInput.addEventListener("input", () => {
 function checkIfPasswordsMatch() {
     const passwordInputValue = passwordInput.value.trim()
     const confirmPasswordInputValue = confirmPasswordInput.value.trim()
-    if (passwordInputValue === confirmPasswordInputValue) {
-        triggerValid(confirmPasswordLabel, confirmPasswordInput, confirmPasswordErrorField)
-        return true;
+    if (passwordInputValue !== confirmPasswordInputValue) {
+        errors[3] = {label: confirmPasswordLabel, input: confirmPasswordInput, message: "Passwords do not match"};
     } else {
-        triggerError(confirmPasswordLabel, confirmPasswordInput, confirmPasswordErrorField, "Error: Passwords do not match. Please try again.")
+        errors[3] = null;
     }
 }
 
@@ -192,14 +206,20 @@ const moveImageOnSubmit = () => {
 // Submission code
 // Performs validation checks and submits form if provided info is valid
 function submitForm() {
-    const usernameIsValid = usernameValidator()
-    const emailIsValid = validateEmailAddress()
-    const passwordIsValid = passwordValidator()
-    const passwordsMatch = checkIfPasswordsMatch()
+    usernameValidator();
+    validateEmailAddress()
+    passwordValidator();
+    checkIfPasswordsMatch();
 
-    if (usernameIsValid && emailIsValid && passwordIsValid && passwordsMatch) {
+    const notNullErrors = errors.filter((data) => data !== null);
+    console.log(notNullErrors)
+    if (notNullErrors.length > 0) {
+        const data = notNullErrors[0]
+        makeAllValid()
+        triggerError(data.label, data.input, data.message)
+    } else {
         moveImageOnSubmit()
-        form.submit()
+        form.submit();
     }
 }
 
@@ -219,10 +239,9 @@ document.addEventListener("keyup", ctrlEnterSubmit)
 
 // Prompt Error if input is in database
 function promptDatabaseError(label, input) {
-    const databaseErrorTitle = document.getElementById("database-error");
-    const titleText = databaseErrorTitle.innerText;
+    const titleText = errorTag.innerText;
     const labelText = label.innerText.slice(0, label.innerText.length - 1);
-
+    // abcABC123!@#
     if (titleText.includes(labelText)) {
          label.style.color = "red";
          input.style.borderColor = "red";

@@ -22,13 +22,11 @@
             <section id="right-s" class="flex">
                 <form method="POST" id="form">
                     <h1 id="form-title">Sign in to Account</h1>
-                     {% for string in ["Email", "Password"]: %}
-                        {% if string in err: %}
-                            <h1 id="database-error" style="color: red">{{ err }}</h1>
-                        {% else: %}
-                            <h1 id="database-error" style="color: red"></h1>
-                        {% endif %}
-                    {% endfor %}
+                    {% if "Email" in err or "Password" in err: %}
+                        <h1 id="error" style="color: red">{{ err }}</h1>
+                    {% else: %}
+                        <h1 id="error" style="color: red"></h1>
+                    {% endif %}
                     <div class="form-group">
                         <label for="email">Email Address:</label>
                         <input type="text" id="email" name="email">
