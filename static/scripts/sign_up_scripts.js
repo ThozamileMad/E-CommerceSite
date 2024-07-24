@@ -79,12 +79,19 @@ function usernameValidator() {
 }
 
 
+const countAt = (email) => {
+    if (email.includes("@")) {
+        return email.match(/@/g).length === 1 ? true : false;
+    } else {
+        return false;
+    }
+}
 
 // Email Validation Code
 // Checks if email has valid characters such as @ and .
 function validateEmailAddress() {
     const emailAddress = emailInput.value
-    const oneAtSymbol = emailAddress.match(/@/g).length === 1 ? true : false
+    const oneAtSymbol = countAt(emailAddress)
     console.log(oneAtSymbol)
     if (emailAddress.includes("@") && emailAddress.includes(".") && oneAtSymbol) {
         const usernameAndDomain = emailAddress.split("@");
