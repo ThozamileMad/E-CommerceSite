@@ -13,7 +13,8 @@ def get_databases(app, db, usermixin):
             email = db.Column(db.String, unique=True, nullable=False)
             password = db.Column(db.String, unique=True, nullable=False)
             recovery_pin = db.Column(db.String, unique=True, nullable=True)
-
+            recovery_pin_creation_datetime = db.Column(db.String, unique=False, nullable=True)
+            recovery_pin_expiration_datetime = db.Column(db.String, unique=False, nullable=True)
 
         class Products(db.Model):
             __bind_key__ = "products"
@@ -21,7 +22,7 @@ def get_databases(app, db, usermixin):
             name = db.Column(db.String, unique=True, nullable=False)
             price = db.Column(db.Integer, unique=False, nullable=False)
             category = db.Column(db.Integer, unique=False, nullable=False)
-            type = db.Column(db.String, unique=False, nullable=False)
+            product_type = db.Column(db.String, unique=False, nullable=False)
             sales_val = db.Column(db.Integer, unique=False, nullable=False)
             times_purchased = db.Column(db.Integer, unique=False, nullable=False)
 
