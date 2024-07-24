@@ -1,12 +1,15 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
-minute = int(datetime.now().strftime("%M"))
+current_date = datetime.now()
+time_delta = timedelta(minutes=30)
 
-def check_expiration_min():
-    exp_time = minute + 30 
+expiry_date = current_date + time_delta
 
-    if exp_time > 59:
-        exp_time -= 59
+print(current_date > expiry_date)
+
+
+
+
     
-    
+
     
