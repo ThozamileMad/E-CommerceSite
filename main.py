@@ -124,6 +124,9 @@ def forgot_password(err):
             if result != 200:
                 return redirect(url_for("forgot_password", err="Error: sorry an error has occured, please click resend."))
             else:
+                user = Users.query.filter_by(email=email).first()
+                user.recovery_pin = generate_password_hash(random_pin)
+                db.session.commit()
                 return redirect(url_for("recover_pin", err="err"))
 
     return render_template("forgot_password.html")
