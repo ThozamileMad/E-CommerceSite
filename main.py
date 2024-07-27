@@ -67,7 +67,7 @@ def restrict_sign_in_out(function):
 @restrict_sign_in_out
 def sign_up(err):
     if request.method == "POST":
-        user_inputs = {item: request.form.get(item) for item in ["username", "email", "password"]}
+        user_inputs = {item: request.form.get(item).strip() for item in ["username", "email", "password"]}
         database_data = db.session.query(Users).all()
 
         for user_data in database_data:
@@ -78,10 +78,8 @@ def sign_up(err):
             elif check_password_hash(user_data.password, user_inputs["password"]):
                 return redirect(url_for("sign_up", err="Error: Password in Database!"))
             
-        encrypter = Encrypter(user_inputs["email"])
-
         valid_data = Users(username=user_inputs["username"],
-                           email=encrypter.encrypted_data,
+                           email=user_inputs["email"],
                            password=generate_password_hash(user_inputs["password"]))
         db_add(valid_data)
         login(len(db.session.query(Users).all()))
@@ -94,16 +92,12 @@ def sign_up(err):
 @restrict_sign_in_out
 def sign_in(err):
     if request.method == "POST":
-        user_inputs = {item: request.form.get(item) for item in ["email", "password"]}
-        database_data = db.session.query(Users).all()
-        user_data = [user_data for user_data in database_data
-                     if Encrypter(user_data.email).decrypted_data == user_inputs["email"]]
-        print(user_data[0])
+        user_inputs = {item: request.form.get(item).strip() for item in ["email", "password"]}
+        user_data = Users.query.filter_by(email=user_inputs["email"]).first()
 
         # Checks if information in database matches user's inputs
 
-        if len(user_data) == 1:
-            user_data = user_data[0]
+        if user_data != None:
             if check_password_hash(user_data.password, user_inputs["password"]):
                 login(user_data.id)  # Logs the in if user's information is valid
                 return redirect(url_for("home"))
@@ -128,14 +122,13 @@ def create_pin_datetime():
 @app.route("/forgot_password/<err>", methods=["GET", "POST"])
 def forgot_password(err):
     if request.method == "POST":
-        email = request.form.get("email")
-        encrypter = Encrypter(email)
-        user_data = Users.query.filter_by(email=encrypter.encrypted_data).first()
+        email = request.form.get("email").strip()
+        user_data = Users.query.filter_by(email=email).first()
 
         if user_data is not None:
             # Generate Random pin and send email
             random_pin = random.randint(1, 999)
-            result = mailsender.send_email(encrypter.decrypted_data, "Password Recovery", "Use this pin to recover your password {}".format(random_pin))
+            result = mailsender.send_email(email, "Password Recovery", "Use this pin to recover your password {}".format(random_pin))
 
             if result != 200:
                 return redirect(url_for("forgot_password", err="Error: sorry an error has occured, please click resend. If the error persists please try again later."))
@@ -160,23 +153,22 @@ def password_recovery(user_id, err):
         current_date = datetime.fromisoformat(datetime.now())
         expiry_date = datetime.fromisoformat(user.pin_expiry_datetime)
         if current_date < expiry_date:
-            if check_password_hash(user_input):
+            if check_password_hash(user.recovery_pin, user_input):
                 user.recovery_pin = ""
                 user.pin_expiry_datetime = ""
                 user.session.commit()
-                encrypter = Encrypter(user.email)
-                result = mailsender.send_email(encrypter.decrypted_data, "Password Recovery", "Use this pin to recover your password {}\n{}".format(random_pin))
-
-                if result != 200:
-                    return redirect(url_for("password_recovery", user_id=user.id, err="Error: sorry an error has occured, please click resend. If the error persists please try again later."))
-                else:
-                    return redirect(url_for("sign_in", err="err"))
-                
+                return redirect(url_for("show_password", user_id=user.id, password=user_input))         
             else:
                 return redirect(url_for("password_recovery", user_id=user.id, err="Error: Invalid pin."))
         else:
             return redirect(url_for("password_recovery", user_id=user.id, err="Error: Pin expired please generate another one."))
     return render_template("password_recovery.html", err=err)
+
+
+@app.route("/show_password/<password>", methods=["GET", "POST"])
+def show_password(password):
+ 
+    return render_template("show_password.html", password=password)
 
 
 @app.route("/logout")
