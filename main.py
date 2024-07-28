@@ -112,11 +112,10 @@ def sign_in(err):
 def create_pin_datetime():
     # Creates recovery pin creation date and recovery pin expiry date
     current_date = datetime.now()
-    time_delta = timedelta(minutes=30)
+    time_delta = timedelta(minutes=2)
     expiry_date = current_date + time_delta
 
     return {"expiry_date": expiry_date}
-
 
 
 @app.route("/forgot_password/<err>", methods=["GET", "POST"])
@@ -125,10 +124,10 @@ def forgot_password(err):
         email = request.form.get("email").strip()
         user_data = Users.query.filter_by(email=email).first()
 
-        if user_data is not None:
+        if user_data != None:
             # Generate Random pin and send email
             random_pin = random.randint(1, 999)
-            result = mailsender.send_email(email, "Password Recovery", "Use this pin to recover your password {}".format(random_pin))
+            result = mailsender.send_email(email, "Password Recovery", "Use the following pin to recover your password {}".format(random_pin))
 
             if result != 200:
                 return redirect(url_for("forgot_password", err="Error: sorry an error has occured, please click resend. If the error persists please try again later."))
@@ -136,10 +135,12 @@ def forgot_password(err):
                 dates = create_pin_datetime()
 
                 # Adds recovery pin and recovery pin dates to user's database
-                user_data.recovery_pin = generate_password_hash(random_pin)
+                user_data.recovery_pin = generate_password_hash(str(random_pin))
                 user_data.pin_expiry_datetime = dates["expiry_date"]
                 db.session.commit()
                 return redirect(url_for("password_recovery", user_id=user_data.id, err="err"))
+        else:
+            return redirect(url_for("forgot_password", err="We cannot find your email."))
 
     return render_template("forgot_password.html", err=err)
 
@@ -150,13 +151,18 @@ def password_recovery(user_id, err):
 
     if request.method == "POST":
         user_input = request.form.get("pin")
-        current_date = datetime.fromisoformat(datetime.now())
+        current_date = datetime.fromisoformat(str(datetime.now()))
+        print(user.pin_expiry_datetime)
         expiry_date = datetime.fromisoformat(user.pin_expiry_datetime)
-        if current_date < expiry_date:
+        
+        mod_current_date = current_date.isoformat()
+        mod_expiry_date = expiry_date.isoformat()
+
+        if mod_current_date < mod_expiry_date:
             if check_password_hash(user.recovery_pin, user_input):
                 user.recovery_pin = ""
                 user.pin_expiry_datetime = ""
-                user.session.commit()
+                db.session.commit()
                 return redirect(url_for("show_password", user_id=user.id, password=user_input))         
             else:
                 return redirect(url_for("password_recovery", user_id=user.id, err="Error: Invalid pin."))
