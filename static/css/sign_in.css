@@ -19,9 +19,6 @@ a:hover {
   color: #1abc9c;
 }
 
-a:active {
-  color: #e74c3c;
-}
 
 /* Left Section */
 #left-s {
@@ -110,4 +107,54 @@ input {
 
 .sign-up.text {
     margin: 20px 0 25px;
+}
+
+@media only screen and (max-width: 380px) {
+    body {
+        background: url("../images/india-5342927_1280.jpg");
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    #left-s, .hanger-img {
+        display: none;
+        background-color: rgba(255, 255, 255, 0.5)
+    }
+
+    /* Right Section */
+    #right-s {
+        width: 100%;
+        font-family: "Roboto", sans-serif;
+    }
+
+    #form-title, label, p {
+        color: white;
+    }
+
+    #form-title {
+        font-size: 36px;
+    }
+    
+    #form-title , #error {
+        text-align: center;
+    }
+
+    form {
+        margin: 35px auto;
+        padding-top: 30px;
+        width: 80%;
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        box-shadow: 0px 0px 10px white;
+        border-radius: 5px;
+    }
+
+    .form-group {
+        padding: 0 30px;
+    }
+
+    a {
+        color: #1abc9c;
+    }
 }
