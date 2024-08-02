@@ -12,6 +12,8 @@ def get_databases(app, db, usermixin):
             username = db.Column(db.String, unique=True, nullable=False)
             email = db.Column(db.String, unique=True, nullable=False)
             password = db.Column(db.String, unique=True, nullable=False)
+            recovery_pin = db.Column(db.String, unique=True, nullable=True)
+            pin_expiry_datetime = db.Column(db.String, unique=False, nullable=True)
 
         class Products(db.Model):
             __bind_key__ = "products"
