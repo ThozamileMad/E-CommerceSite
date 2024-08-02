@@ -1,0 +1,29 @@
+from datetime import datetime, timedelta
+
+class recoverPassword:
+    def __init__(self, user, db):
+        self.current_date = datetime.now()
+        self.user = user
+        self.db = db
+        self.expiry_time = 15
+        self.expiry_date = self.create_pin_datetime()
+
+    def create_pin_datetime(self):
+        # Creates recovery pin creation date and recovery pin expiry date
+        time_delta = timedelta(minutes=self.expiry_time)
+        expiry_date = self.current_date + time_delta
+        return expiry_date
+
+    def add_recovery_pin_to_db(self, hashed_password=None, expiry_date=None):
+        self.user.recovery_pin = hashed_password
+        self.user.pin_expiry_datetime = expiry_date
+        self.db.session.commit()
+
+    def compare_dates(self):
+        current_date = datetime.fromisoformat(str(self.current_date))
+        expiry_date = datetime.fromisoformat(self.user.pin_expiry_datetime)
+        
+        mod_current_date = current_date.isoformat()
+        mod_expiry_date = expiry_date.isoformat()
+
+        return mod_current_date < mod_expiry_date
