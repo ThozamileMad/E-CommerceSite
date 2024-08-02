@@ -1,5 +1,8 @@
-html, body {
+html, body, main {
     height: 100%;
+}
+
+html, body {
     margin: 0;
 }
 
@@ -9,10 +12,6 @@ html, body {
 
 .t-center {
     text-align: center;
-}
-
-main {
-    height: 100%;
 }
 
 a:hover {
@@ -86,7 +85,6 @@ input {
 }
 
 .but-div {
-    text-align: center;
     padding-top: 12px;
 }
 
@@ -109,23 +107,22 @@ input {
     margin: 20px 0 25px;
 }
 
-@media only screen and (max-width: 380px) {
-    body {
+@media only screen and (max-width: 600px) {
+    main {
         background: url("../images/india-5342927_1280.jpg");
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+        height: 100%;
     }
 
     #left-s, .hanger-img {
         display: none;
-        background-color: rgba(255, 255, 255, 0.5)
     }
 
     /* Right Section */
-    #right-s {
+    #right-s, input {
         width: 100%;
-        font-family: "Roboto", sans-serif;
     }
 
     #form-title, label, p {
@@ -133,17 +130,20 @@ input {
     }
 
     #form-title {
-        font-size: 36px;
-    }
-    
+        font-size: 240%;
+    } 
+
     #form-title , #error {
         text-align: center;
     }
 
-    form {
-        margin: 35px auto;
-        padding-top: 30px;
+    form, .form-group {
         width: 80%;
+    }
+
+    form {
+        margin: 15px auto;
+        padding-top: 30px;
         background-color: rgba(255, 255, 255, 0.2);
         border: 2px solid white;
         box-shadow: 0px 0px 10px white;
@@ -151,7 +151,7 @@ input {
     }
 
     .form-group {
-        padding: 0 30px;
+        margin: 0 auto 15px;
     }
 
     a {
