@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sign In</title>
 
         <!-- My Stylesheet -->
@@ -34,7 +35,7 @@
                     <div class="form-group">
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password">
-                        <a id="forgot-password" href="#"> Forgot Password?</a>
+                        <a id="forgot-password" href="{{ url_for('forgot_password', err='err') }}"> Forgot Password?</a>
                     </div>
                     <div class="but-div t-center">
                         <button type="button" id="form-but">
