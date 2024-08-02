@@ -1,7 +1,9 @@
-const form = document.getElementById("form")
+const body = document.querySelector("body");
+const form = document.getElementById("form");
+const leftSection = document.getElementById("left-s");
 
 // Error Element
-const errorTag = document.getElementById("error")
+const errorTag = document.getElementById("error");
 
 // Username elements
 const usernameLabel = document.querySelector("label[for='username']");
@@ -19,13 +21,9 @@ const emailInput = document.getElementById("email");
 const confirmPasswordLabel = document.querySelector("label[for='confirm-password']");
 const confirmPasswordInput = document.getElementById("confirm-password");
 
-// Errors
-const errors = [null, null, null, null]
-
-// Hanger Image
-const hangerImage = document.querySelector(".hanger-img")
-
-const submitButton = document.getElementById("form-but")
+const errors = [null, null, null, null];
+const hangerImage = document.querySelector(".hanger-img");
+const submitButton = document.getElementById("form-but");
 
 // Checks for invalid characters using regex
 const invalidInput = (regex, input) => {
@@ -34,40 +32,32 @@ const invalidInput = (regex, input) => {
 
 
 // Displays errors by making an element's features red and showing error message
-function triggerError(label, input, message) {
-    label.style.color = "red";
-    input.style.borderColor = "red";
-    errorTag.textContent = message
+function triggerResponse(label, labelColor, input, inputBorderColor, message) {
+    label.style.color = labelColor;
+    input.style.borderColor = inputBorderColor;
+    errorTag.textContent = message;
 }
 
-
-// Reverts errors back to valid
-function triggerValid(label, input) {
-    label.style.color = "black";
-    input.style.borderColor = "black";
-    errorTag.textContent = "";
-}
-
-
+// Makes label and input valid - from red to default colors.
 function makeAllValid() {
     const labels = document.querySelectorAll("label");
     const inputs = document.querySelectorAll("input");
-
     for (let i = 0; i < labels.length; i++) {
-        triggerValid(labels[i], inputs[i])
+        body.offsetWidth > 600 ? triggerResponse(labels[i], "black", inputs[i], "#B0B0B0", "") : triggerResponse(labels[i], "white", inputs[i], "#B0B0B0", "");
     }
 }
 
 
 // Username Validation Code
-
 // Ensures that the username provided by the user has no invalid characters
 // Ensures that the username meets minimum and maximum length conditions
 function usernameValidator() {
     const inputValue = usernameInput.value;
-    const inputLength = inputValue.trim().length;
+    const trimmedInputValue = inputValue.trim()
+    const inputLength = trimmedInputValue.length;
+    const regexList = [/[^a-zA-Z\d_\-.]/, /^\s/]
 
-    if (invalidInput(/[^a-zA-Z\d_\-.]/, inputValue.trim()) || invalidInput(/^\s/, inputValue)) {
+    if (invalidInput(regexList[0], trimmedInputValue) || invalidInput(regexList[1], inputValue)) {
         errors[0] = {label: usernameLabel, input: usernameInput, message: "Invalid username: Please use only letters, numbers, underscores (_), hyphens (-), and periods (.)."};
     } else if (inputLength < 3) {
         errors[0] = {label: usernameLabel, input: usernameInput, message: "Your username must be at least 3 characters long. Please enter a longer username."};
@@ -78,7 +68,7 @@ function usernameValidator() {
     }
 }
 
-
+// Returns true if one @ symbol in email 
 const countAt = (email) => {
     if (email.includes("@")) {
         return email.match(/@/g).length === 1 ? true : false;
@@ -92,16 +82,22 @@ const countAt = (email) => {
 function validateEmailAddress() {
     const emailAddress = emailInput.value
     const oneAtSymbol = countAt(emailAddress)
-    console.log(oneAtSymbol)
+
     if (emailAddress.includes("@") && emailAddress.includes(".") && oneAtSymbol) {
         const usernameAndDomain = emailAddress.split("@");
         const emailUsername = usernameAndDomain[0];
         const emailDomain = usernameAndDomain[1];
 
+        // Username and domain validation regex values
+        const regexDict = {
+            username: /^[\.\-_!#$%&'*+/=?^`{|}~\s]|[\.\-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()\s]|[-_!\.#$%&'*+/=?^`{|}~]{2}/,
+            domain: /^[-.\s]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/,
+        }
+
         // Prompts Username and Domain Error
-        if (invalidInput(/^[\.\-_!#$%&'*+/=?^`{|}~\s]|[\.\-_!#$%&'*+/=?^`{|}~]$|[\\,":;<>[\]()\s]|[-_!\.#$%&'*+/=?^`{|}~]{2}/, emailUsername)) {
+        if (invalidInput(regexDict.username, emailUsername)) {
             errors[1] = {label: emailLabel, input: emailInput, message: "Invalid Email Username. Please enter a valid email address. Ensure there are no spaces or invalid characters."};
-        } else if (invalidInput(/^[-.\s]|[-.]$|[^a-zA-Z0-9-.]|[.-]{2}/, emailDomain)) {
+        } else if (invalidInput(regexDict.domain, emailDomain)) {
             errors[1] = {label: emailLabel, input: emailInput, message: "Invalid Email Domain. Please enter a valid email address. Ensure there are no spaces or invalid characters."};
         } else {
             errors[1] = null
@@ -210,20 +206,33 @@ const moveImageOnSubmit = () => {
     }, 400)
 }
 
+
+const adjustElementHeight = () => {
+    const error = document.getElementById("error");
+    const style = getComputedStyle(error);
+    const errorHeight = error.offsetHeight;
+    const errorMarginTopBottom = Number(style.marginTop.split(".")[0]) * 2;
+    const totalSize =  errorHeight + errorMarginTopBottom
+
+    leftSection.style.height = "100%";
+    leftSection.style.height = `${leftSection.offsetHeight + totalSize}px`
+}
+
+
 // Submission code
 // Performs validation checks and submits form if provided info is valid
 function submitForm() {
     usernameValidator();
-    validateEmailAddress()
+    validateEmailAddress();
     passwordValidator();
     checkIfPasswordsMatch();
 
     const notNullErrors = errors.filter((data) => data !== null);
-    console.log(notNullErrors)
     if (notNullErrors.length > 0) {
         const data = notNullErrors[0]
         makeAllValid()
-        triggerError(data.label, data.input, data.message)
+        triggerResponse(data.label, "red", data.input, "red", data.message)
+        adjustElementHeight()
     } else {
         moveImageOnSubmit()
         form.submit();
@@ -248,7 +257,6 @@ document.addEventListener("keyup", ctrlEnterSubmit)
 function promptDatabaseError(label, input) {
     const titleText = errorTag.innerText;
     const labelText = label.innerText.slice(0, label.innerText.length - 1);
-    // abcABC123!@#
     if (titleText.includes(labelText)) {
          label.style.color = "red";
          input.style.borderColor = "red";
